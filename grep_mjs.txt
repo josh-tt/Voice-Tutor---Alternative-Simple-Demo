@@ -1,0 +1,375 @@
+2378-     * If there are thought parts in the response, the concatenation of all text
+2379-     * parts excluding the thought parts will be returned.
+2380-     *
+2381-     * @example
+2382-     * ```ts
+2383:     * const response = await ai.models.generateContent({
+2384-     *   model: 'gemini-2.0-flash',
+2385-     *   contents:
+2386-     *     'Why is the sky blue?',
+2387-     * });
+2388-     *
+--
+2486-     *         'Color temperature of the light fixture which can be `daylight`, `cool` or `warm`.',
+2487-     *     },
+2488-     *   },
+2489-     *   required: ['brightness', 'colorTemperature'],
+2490-     *  };
+2491:     *  const response = await ai.models.generateContent({
+2492-     *     model: 'gemini-2.0-flash',
+2493-     *     contents: 'Dim the lights so the room feels cozy and warm.',
+2494-     *     config: {
+2495-     *       tools: [{functionDeclarations: [controlLightFunctionDeclaration]}],
+2496-     *       toolConfig: {
+--
+2527-     * If there are no executable code in the response, undefined will be
+2528-     * returned.
+2529-     *
+2530-     * @example
+2531-     * ```ts
+2532:     * const response = await ai.models.generateContent({
+2533-     *   model: 'gemini-2.0-flash',
+2534-     *   contents:
+2535-     *     'What is the sum of the first 50 prime numbers? Generate and run code for the calculation, and make sure you get all 50.'
+2536-     *   config: {
+2537-     *     tools: [{codeExecution: {}}],
+--
+2563-     * the first one will be returned.
+2564-     * If there are no code execution result in the response, undefined will be returned.
+2565-     *
+2566-     * @example
+2567-     * ```ts
+2568:     * const response = await ai.models.generateContent({
+2569-     *   model: 'gemini-2.0-flash',
+2570-     *   contents:
+2571-     *     'What is the sum of the first 50 prime numbers? Generate and run code for the calculation, and make sure you get all 50.'
+2572-     *   config: {
+2573-     *     tools: [{codeExecution: {}}],
+--
+4468-        undefined) {
+4469-        throw new Error('streamFunctionCallArguments parameter is not supported in Gemini API.');
+4470-    }
+4471-    return toObject;
+4472-}
+4473:function generateContentConfigToMldev$1(apiClient, fromObject, parentObject) {
+4474-    const toObject = {};
+4475-    const fromSystemInstruction = getValueByPath(fromObject, [
+4476-        'systemInstruction',
+4477-    ]);
+4478-    if (parentObject !== undefined && fromSystemInstruction != null) {
+--
+4635-    if (parentObject !== undefined && fromServiceTier != null) {
+4636-        setValueByPath(parentObject, ['serviceTier'], fromServiceTier);
+4637-    }
+4638-    return toObject;
+4639-}
+4640:function generateContentResponseFromMldev$1(fromObject) {
+4641-    const toObject = {};
+4642-    const fromSdkHttpResponse = getValueByPath(fromObject, [
+4643-        'sdkHttpResponse',
+4644-    ]);
+4645-    if (fromSdkHttpResponse != null) {
+--
+4777-    if (fromMetadata != null) {
+4778-        setValueByPath(toObject, ['metadata'], fromMetadata);
+4779-    }
+4780-    const fromConfig = getValueByPath(fromObject, ['config']);
+4781-    if (fromConfig != null) {
+4782:        setValueByPath(toObject, ['request', 'generationConfig'], generateContentConfigToMldev$1(apiClient, fromConfig, getValueByPath(toObject, ['request'], {})));
+4783-    }
+4784-    return toObject;
+4785-}
+4786-function inlinedResponseFromMldev(fromObject) {
+4787-    const toObject = {};
+4788-    const fromResponse = getValueByPath(fromObject, ['response']);
+4789-    if (fromResponse != null) {
+4790:        setValueByPath(toObject, ['response'], generateContentResponseFromMldev$1(fromResponse));
+4791-    }
+4792-    const fromMetadata = getValueByPath(fromObject, ['metadata']);
+4793-    if (fromMetadata != null) {
+4794-        setValueByPath(toObject, ['metadata'], fromMetadata);
+4795-    }
+--
+7244-     */
+7245-    async sendMessage(params) {
+7246-        var _a;
+7247-        await this.sendPromise;
+7248-        const inputContent = tContent(params.message);
+7249:        const responsePromise = this.modelsModule.generateContent({
+7250-            model: this.model,
+7251-            contents: this.getHistory(true).concat(inputContent),
+7252-            config: (_a = params.config) !== null && _a !== void 0 ? _a : this.config,
+7253-        });
+7254-        this.sendPromise = (async () => {
+--
+7299-     */
+7300-    async sendMessageStream(params) {
+7301-        var _a;
+7302-        await this.sendPromise;
+7303-        const inputContent = tContent(params.message);
+7304:        const streamResponse = this.modelsModule.generateContentStream({
+7305-            model: this.model,
+7306-            contents: this.getHistory(true).concat(inputContent),
+7307-            config: (_a = params.config) !== null && _a !== void 0 ? _a : this.config,
+7308-        });
+7309-        // Resolve the internal tracking of send completion promise - `sendPromise`
+--
+9954-    if (getValueByPath(fromObject, ['behavior']) !== undefined) {
+9955-        throw new Error('behavior parameter is not supported in Gemini Enterprise Agent Platform (previously known as Vertex AI).');
+9956-    }
+9957-    return toObject;
+9958-}
+9959:function generateContentConfigToMldev(apiClient, fromObject, parentObject, rootObject) {
+9960-    const toObject = {};
+9961-    const fromSystemInstruction = getValueByPath(fromObject, [
+9962-        'systemInstruction',
+9963-    ]);
+9964-    if (parentObject !== undefined && fromSystemInstruction != null) {
+--
+10121-    if (parentObject !== undefined && fromServiceTier != null) {
+10122-        setValueByPath(parentObject, ['serviceTier'], fromServiceTier);
+10123-    }
+10124-    return toObject;
+10125-}
+10126:function generateContentConfigToVertex(apiClient, fromObject, parentObject, rootObject) {
+10127-    const toObject = {};
+10128-    const fromSystemInstruction = getValueByPath(fromObject, [
+10129-        'systemInstruction',
+10130-    ]);
+10131-    if (parentObject !== undefined && fromSystemInstruction != null) {
+--
+10299-    if (parentObject !== undefined && fromServiceTier != null) {
+10300-        setValueByPath(parentObject, ['serviceTier'], fromServiceTier);
+10301-    }
+10302-    return toObject;
+10303-}
+10304:function generateContentParametersToMldev(apiClient, fromObject, rootObject) {
+10305-    const toObject = {};
+10306-    const fromModel = getValueByPath(fromObject, ['model']);
+10307-    if (fromModel != null) {
+10308-        setValueByPath(toObject, ['_url', 'model'], tModel(apiClient, fromModel));
+10309-    }
+--
+10317-        }
+10318-        setValueByPath(toObject, ['contents'], transformedList);
+10319-    }
+10320-    const fromConfig = getValueByPath(fromObject, ['config']);
+10321-    if (fromConfig != null) {
+10322:        setValueByPath(toObject, ['generationConfig'], generateContentConfigToMldev(apiClient, fromConfig, toObject));
+10323-    }
+10324-    return toObject;
+10325-}
+10326:function generateContentParametersToVertex(apiClient, fromObject, rootObject) {
+10327-    const toObject = {};
+10328-    const fromModel = getValueByPath(fromObject, ['model']);
+10329-    if (fromModel != null) {
+10330-        setValueByPath(toObject, ['_url', 'model'], tModel(apiClient, fromModel));
+10331-    }
+--
+10339-        }
+10340-        setValueByPath(toObject, ['contents'], transformedList);
+10341-    }
+10342-    const fromConfig = getValueByPath(fromObject, ['config']);
+10343-    if (fromConfig != null) {
+10344:        setValueByPath(toObject, ['generationConfig'], generateContentConfigToVertex(apiClient, fromConfig, toObject));
+10345-    }
+10346-    return toObject;
+10347-}
+10348:function generateContentResponseFromMldev(fromObject, rootObject) {
+10349-    const toObject = {};
+10350-    const fromSdkHttpResponse = getValueByPath(fromObject, [
+10351-        'sdkHttpResponse',
+10352-    ]);
+10353-    if (fromSdkHttpResponse != null) {
+--
+10387-    if (fromModelStatus != null) {
+10388-        setValueByPath(toObject, ['modelStatus'], fromModelStatus);
+10389-    }
+10390-    return toObject;
+10391-}
+10392:function generateContentResponseFromVertex(fromObject, _rootObject) {
+10393-    const toObject = {};
+10394-    const fromSdkHttpResponse = getValueByPath(fromObject, [
+10395-        'sdkHttpResponse',
+10396-    ]);
+10397-    if (fromSdkHttpResponse != null) {
+--
+14570-         * @param params - The parameters for generating content.
+14571-         * @return The response from generating content.
+14572-         *
+14573-         * @example
+14574-         * ```ts
+14575:         * const response = await ai.models.generateContent({
+14576-         *   model: 'gemini-2.0-flash',
+14577-         *   contents: 'why is the sky blue?',
+14578-         *   config: {
+14579-         *     candidateCount: 2,
+14580-         *   }
+14581-         * });
+14582-         * console.log(response);
+14583-         * ```
+14584-         */
+14585:        this.generateContent = async (params) => {
+14586-            var _a, _b, _c, _d, _e;
+14587-            const transformedParams = await this.processParamsMaybeAddMcpUsage(params);
+14588-            this.maybeMoveToResponseJsonSchem(params);
+14589-            if (!hasCallableTools(params) || shouldDisableAfc(params.config)) {
+14590:                return await this.generateContentInternal(transformedParams);
+14591-            }
+14592-            const incompatibleToolIndexes = findAfcIncompatibleToolIndexes(params);
+14593-            if (incompatibleToolIndexes.length > 0) {
+14594-                const formattedIndexes = incompatibleToolIndexes
+14595-                    .map((index) => `tools[${index}]`)
+--
+14600-            let functionResponseContent;
+14601-            const automaticFunctionCallingHistory = tContents(transformedParams.contents);
+14602-            const maxRemoteCalls = (_c = (_b = (_a = transformedParams.config) === null || _a === void 0 ? void 0 : _a.automaticFunctionCalling) === null || _b === void 0 ? void 0 : _b.maximumRemoteCalls) !== null && _c !== void 0 ? _c : DEFAULT_MAX_REMOTE_CALLS;
+14603-            let remoteCalls = 0;
+14604-            while (remoteCalls < maxRemoteCalls) {
+14605:                response = await this.generateContentInternal(transformedParams);
+14606-                if (!response.functionCalls || response.functionCalls.length === 0) {
+14607-                    break;
+14608-                }
+14609-                const responseContent = response.candidates[0].content;
+14610-                const functionResponseParts = [];
+--
+14661-         * @param params - The parameters for generating content with streaming response.
+14662-         * @return The response from generating content.
+14663-         *
+14664-         * @example
+14665-         * ```ts
+14666:         * const response = await ai.models.generateContentStream({
+14667-         *   model: 'gemini-2.0-flash',
+14668-         *   contents: 'why is the sky blue?',
+14669-         *   config: {
+14670-         *     maxOutputTokens: 200,
+14671-         *   }
+--
+14673-         * for await (const chunk of response) {
+14674-         *   console.log(chunk);
+14675-         * }
+14676-         * ```
+14677-         */
+14678:        this.generateContentStream = async (params) => {
+14679-            var _a, _b, _c, _d, _e;
+14680-            this.maybeMoveToResponseJsonSchem(params);
+14681-            if (shouldDisableAfc(params.config)) {
+14682-                const transformedParams = await this.processParamsMaybeAddMcpUsage(params);
+14683:                return await this.generateContentStreamInternal(transformedParams);
+14684-            }
+14685-            const incompatibleToolIndexes = findAfcIncompatibleToolIndexes(params);
+14686-            if (incompatibleToolIndexes.length > 0) {
+14687-                const formattedIndexes = incompatibleToolIndexes
+14688-                    .map((index) => `tools[${index}]`)
+--
+14985-                    if (wereFunctionsCalled) {
+14986-                        remoteCallCount++;
+14987-                        wereFunctionsCalled = false;
+14988-                    }
+14989-                    const transformedParams = yield __await(models.processParamsMaybeAddMcpUsage(params));
+14990:                    const response = yield __await(models.generateContentStreamInternal(transformedParams));
+14991-                    const functionResponses = [];
+14992-                    const responseContents = [];
+14993-                    try {
+14994-                        for (var _f = true, response_1 = (e_1 = void 0, __asyncValues(response)), response_1_1; response_1_1 = yield __await(response_1.next()), _a = response_1_1.done, !_a; _f = true) {
+14995-                            _c = response_1_1.value;
+--
+15050-                    }
+15051-                }
+15052-            });
+15053-        })(this, afcToolsMap, params);
+15054-    }
+15055:    async generateContentInternal(params) {
+15056-        var _a, _b, _c, _d;
+15057-        let response;
+15058-        let path = '';
+15059-        let queryParams = {};
+15060-        if (this.apiClient.isVertexAI()) {
+15061:            const body = generateContentParametersToVertex(this.apiClient, params);
+15062:            path = formatMap('{model}:generateContent', body['_url']);
+15063-            queryParams = body['_query'];
+15064-            delete body['_url'];
+15065-            delete body['_query'];
+15066-            response = this.apiClient
+15067-                .request({
+--
+15080-                    };
+15081-                    return response;
+15082-                });
+15083-            });
+15084-            return response.then((apiResponse) => {
+15085:                const resp = generateContentResponseFromVertex(apiResponse);
+15086-                const typedResp = new GenerateContentResponse();
+15087-                Object.assign(typedResp, resp);
+15088-                return typedResp;
+15089-            });
+15090-        }
+15091-        else {
+15092:            const body = generateContentParametersToMldev(this.apiClient, params);
+15093:            path = formatMap('{model}:generateContent', body['_url']);
+15094-            queryParams = body['_query'];
+15095-            delete body['_url'];
+15096-            delete body['_query'];
+15097-            response = this.apiClient
+15098-                .request({
+--
+15111-                    };
+15112-                    return response;
+15113-                });
+15114-            });
+15115-            return response.then((apiResponse) => {
+15116:                const resp = generateContentResponseFromMldev(apiResponse);
+15117-                const typedResp = new GenerateContentResponse();
+15118-                Object.assign(typedResp, resp);
+15119-                return typedResp;
+15120-            });
+15121-        }
+15122-    }
+15123:    async generateContentStreamInternal(params) {
+15124-        var _a, _b, _c, _d;
+15125-        let response;
+15126-        let path = '';
+15127-        let queryParams = {};
+15128-        if (this.apiClient.isVertexAI()) {
+15129:            const body = generateContentParametersToVertex(this.apiClient, params);
+15130-            path = formatMap('{model}:streamGenerateContent?alt=sse', body['_url']);
+15131-            queryParams = body['_query'];
+15132-            delete body['_url'];
+15133-            delete body['_query'];
+15134-            const apiClient = this.apiClient;
+--
+15146-                    try {
+15147-                        for (var _d = true, apiResponse_1 = __asyncValues(apiResponse), apiResponse_1_1; apiResponse_1_1 = yield __await(apiResponse_1.next()), _a = apiResponse_1_1.done, !_a; _d = true) {
+15148-                            _c = apiResponse_1_1.value;
+15149-                            _d = false;
+15150-                            const chunk = _c;
+15151:                            const resp = generateContentResponseFromVertex((yield __await(chunk.json())), params);
+15152-                            resp['sdkHttpResponse'] = {
+15153-                                headers: chunk.headers,
+15154-                            };
+15155-                            const typedResp = new GenerateContentResponse();
+15156-                            Object.assign(typedResp, resp);
+--
+15166-                    }
+15167-                });
+15168-            });
+15169-        }
+15170-        else {
+15171:            const body = generateContentParametersToMldev(this.apiClient, params);
+15172-            path = formatMap('{model}:streamGenerateContent?alt=sse', body['_url']);
+15173-            queryParams = body['_query'];
+15174-            delete body['_url'];
+15175-            delete body['_query'];
+15176-            const apiClient = this.apiClient;
+--
+15188-                    try {
+15189-                        for (var _d = true, apiResponse_2 = __asyncValues(apiResponse), apiResponse_2_1; apiResponse_2_1 = yield __await(apiResponse_2.next()), _a = apiResponse_2_1.done, !_a; _d = true) {
+15190-                            _c = apiResponse_2_1.value;
+15191-                            _d = false;
+15192-                            const chunk = _c;
+15193:                            const resp = generateContentResponseFromMldev((yield __await(chunk.json())), params);
+15194-                            resp['sdkHttpResponse'] = {
+15195-                                headers: chunk.headers,
+15196-                            };
+15197-                            const typedResp = new GenerateContentResponse();
+15198-                            Object.assign(typedResp, resp);

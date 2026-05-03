@@ -1,0 +1,6 @@
+{
+  "name": "Lingua Tutor",
+  "description": "An AI language tutor for conversational practice.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": []
+}
