@@ -7,7 +7,7 @@ import {GoogleGenAI, Modality, ThinkingLevel} from '@google/genai';
 // Initialize Gemini with v1alpha for the latest Gemini 3.1 features including thinking and live audio
 const ai = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY,
-  apiVersion: 'v1alpha'
+  apiVersion: 'v1beta'
 });
 
 export default function ChatTutor() {
@@ -75,9 +75,9 @@ export default function ChatTutor() {
     setMessages(prev => [...prev, {role: 'user', message: userMsg}]);
 
     try {
-      // Integrated Text + Audio response using Gemini 3.1 Live
+      // Use Gemini 3.1 Pro for high-intelligence tutoring and thinking process
       const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-live-preview", 
+        model: "gemini-3.1-pro-preview", 
         contents: [
           { 
             role: 'user', 
@@ -90,12 +90,6 @@ export default function ChatTutor() {
           }
         ],
         config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Kore' },
-            },
-          },
           thinkingConfig: {
             thinkingLevel: ThinkingLevel.MEDIUM
           }
@@ -105,14 +99,8 @@ export default function ChatTutor() {
       const reply = response.text || "Lo siento, I couldn't understand that.";
       setMessages(prev => [...prev, {role: 'assistant', message: reply}]);
       
-      const audioPart = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-      const audioData = audioPart?.inlineData?.data;
-
-      if (audioData) {
-        handleAudioPlayback(audioData);
-      } else {
-        setStatus('idle');
-      }
+      // Perform TTS as a separate step for stability since pro might not support direct audio output modality
+      await playAudio(reply);
     } catch (err) {
       console.error(err);
       setMessages(prev => [...prev, {role: 'assistant', message: "Lo siento, I had trouble connecting."}]);

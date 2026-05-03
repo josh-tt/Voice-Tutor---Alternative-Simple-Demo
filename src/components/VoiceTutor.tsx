@@ -7,7 +7,7 @@ import {GoogleGenAI, Modality, ThinkingLevel} from '@google/genai';
 // Initialize Gemini with v1alpha for the latest Gemini 3.1 features including thinking and live audio
 const ai = new GoogleGenAI({ 
   apiKey: process.env.GEMINI_API_KEY,
-  apiVersion: 'v1alpha'
+  apiVersion: 'v1beta'
 });
 
 export default function VoiceTutor() {
@@ -58,9 +58,9 @@ export default function VoiceTutor() {
       reader.onloadend = async () => {
         const base64Data = (reader.result as string).split(',')[1];
         
-        // Use Gemini 3.1 Live for integrated thinking and audio output
+        // Use Gemini 3.1 Pro for reasoning
         const result = await ai.models.generateContent({
-          model: "gemini-3.1-flash-live-preview",
+          model: "gemini-3.1-pro-preview",
           contents: [
             {
               role: 'user',
@@ -75,19 +75,12 @@ export default function VoiceTutor() {
                   text: `You are a friendly language tutor in ${language}. 
                   Listen to my audio and reply in ${language}. 
                   If I made a mistake, explain it briefly. 
-                  Keep your reply very short and conversational (1-2 sentences max).
-                  Respond with BOTH text and audio.`
+                  Keep your reply very short and conversational (1-2 sentences max).`
                 }
               ]
             }
           ],
           config: {
-            responseModalities: [Modality.AUDIO],
-            speechConfig: {
-              voiceConfig: {
-                prebuiltVoiceConfig: { voiceName: 'Puck' }
-              }
-            },
             thinkingConfig: {
               thinkingLevel: ThinkingLevel.MEDIUM
             }
@@ -95,13 +88,28 @@ export default function VoiceTutor() {
         });
 
         const replyText = result.text || "";
-        const replyPart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-        const replyAudio = replyPart?.inlineData?.data;
-        
         setAiText(replyText);
         
-        if (replyAudio) {
-          playAudio(replyAudio);
+        if (replyText) {
+          const ttsResult = await ai.models.generateContent({
+            model: "gemini-3.1-flash-tts-preview",
+            contents: [{ parts: [{ text: replyText }] }],
+            config: {
+              responseModalities: [Modality.AUDIO],
+              speechConfig: {
+                voiceConfig: {
+                  prebuiltVoiceConfig: { voiceName: 'Puck' }
+                }
+              }
+            }
+          });
+
+          const replyAudio = ttsResult.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+          if (replyAudio) {
+            playAudio(replyAudio);
+          } else {
+            setStatus('idle');
+          }
         } else {
           setStatus('idle');
         }
